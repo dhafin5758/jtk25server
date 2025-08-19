@@ -11,6 +11,18 @@ router
   .get("/", (context) => {
     context.response.body = "JTK25 Jadwal API";
   })
+  .get("/download/:version", async (context) => {
+    const version = context.params.version;
+    // Sanitize version parameter to ensure it's a float only
+    if (!/^\d+(\.\d+)?$/.test(version)) {
+      context.response.status = 400;
+      context.response.body = "Invalid version format. Must be a float value.";
+      return;
+    }
+    return context.response.body = await Deno.readFile(
+      `./builds/${version}.apk`,
+    );
+  })
   .get("/api/version", (context) => context.response.body = 1)
   .get("/api/schedules", (context) => {
     context.response.body = schedulesData;
